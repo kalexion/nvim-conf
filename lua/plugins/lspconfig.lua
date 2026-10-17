@@ -1,3 +1,10 @@
+-- Register Arduino sketches as C++ files before configuring LSP servers.
+vim.filetype.add({
+    extension = {
+        ino = "cpp",
+    },
+})
+
 return {
     {
         "neovim/nvim-lspconfig",
@@ -34,6 +41,7 @@ return {
                 "cssls",
                 "ts_ls",
                 "jdtls",
+                "lemminx",
             }
 
             local formatters_and_linters = {
@@ -73,18 +81,21 @@ return {
                         }
 
                         if server_name == "clangd" then
+                            local home = vim.fn.expand("~")
+
                             opts.cmd = {
                                 "clangd",
-                                "--compile-commands-dir=build",
                                 "--background-index",
                                 "--clang-tidy",
                                 "--header-insertion=never",
                                 "--completion-style=detailed",
                                 "--header-insertion-decorators",
                                 "--all-scopes-completion",
+                                "--query-driver=" .. home .. "/.arduino15/packages/arduino/tools/avr-gcc/*/bin/avr-g++",
                             }
 
-                            opts.root_dir = lspconfig.util.root_pattern(".clangd", "compile_commands.json", ".git")
+                            -- Prefer a project compilation database when available.
+                            opts.root_dir = lspconfig.util.root_pattern("compile_commands.json", ".clangd", ".git")
                         elseif server_name == "gopls" then
                             opts.settings = {
                                 gopls = {
@@ -199,7 +210,26 @@ return {
                     builtins.formatting.stylua,
                     builtins.formatting.shfmt,
                     builtins.diagnostics.golangci_lint,
-                    builtins.formatting.prettier,
+                    builtins.formatting.prettier.with({
+                        filetypes = {
+                            "javascript",
+                            "javascriptreact",
+                            "typescript",
+                            "typescriptreact",
+                            "css",
+                            "scss",
+                            "less",
+                            "html",
+                            "json",
+                            "jsonc",
+                            "yaml",
+                            "markdown",
+                            "markdown.mdx",
+                            "graphql",
+                            "handlebars",
+                            "xml",
+                        },
+                    }),
                     builtins.formatting.google_java_format,
                     typstyle,
                     odinfmt,
@@ -213,13 +243,10 @@ return {
 
             vim.diagnostic.config({
                 update_in_insert = false,
-
                 virtual_text = false,
-
                 signs = true,
                 underline = true,
                 severity_sort = true,
-
                 float = {
                     border = "rounded",
                     source = "if_many",
@@ -227,6 +254,7 @@ return {
             })
 
             vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
+
             vim.keymap.set("n", "<leader>fm", function()
                 vim.lsp.buf.format({
                     bufnr = vim.api.nvim_get_current_buf(),
@@ -240,11 +268,25 @@ return {
             vim.keymap.set("n", "<leader>a", function()
                 vim.diagnostic.setloclist()
                 vim.cmd("lopen")
-            end, { noremap = true, silent = true })
+            end, {
+                noremap = true,
+                silent = true,
+            })
 
-            vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { noremap = false, silent = false })
-            vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { noremap = false, silent = false })
-            vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { noremap = true, silent = true })
+            vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, {
+                noremap = false,
+                silent = false,
+            })
+
+            vim.keymap.set("n", "]d", vim.diagnostic.goto_next, {
+                noremap = false,
+                silent = false,
+            })
+
+            vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, {
+                noremap = true,
+                silent = true,
+            })
         end,
     },
 }
