@@ -10,14 +10,14 @@ return {
 
             on_highlights = function(hl, c)
                 hl.StatusLine = { bg = "NONE", fg = c.fg }
-                hl.StatusLineMode = { bg = c.bg_alt, fg = c.glow, bold = true }
-                hl.StatusLinePath = { bg = c.bg_alt, fg = c.fg }
-                hl.StatusLineBranch = { bg = c.bg_alt, fg = c.glow }
-                hl.StatusLineError = { bg = c.bg_alt, fg = c.error }
-                hl.StatusLineWarn = { bg = c.bg_alt, fg = c.warning }
-                hl.StatusLineHint = { bg = c.bg_alt, fg = c.info }
-                hl.StatusLineLines = { bg = c.bg_alt, fg = c.fg_dim }
-                hl.StatusLineCur = { bg = c.bg_alt, fg = c.glow, bold = true }
+                hl.StatusLineMode = { bg = "#006949", fg = c.glow, bold = true }
+                hl.StatusLinePath = { bg = "#006949", fg = c.fg }
+                hl.StatusLineBranch = { bg = "#006949", fg = c.glow }
+                hl.StatusLineError = { bg = "#006949", fg = c.error }
+                hl.StatusLineWarn = { bg = "#006949", fg = c.warning }
+                hl.StatusLineHint = { bg = "#006949", fg = c.info }
+                hl.StatusLineLines = { bg = "#006949", fg = c.fg_dim }
+                hl.StatusLineCur = { bg = "#006949", fg = c.glow, bold = true }
                 hl.ColorColumn = { bg = c.bg_alt }
                 hl.CursorLine = { bg = c.bg_alt }
                 hl.CursorColumn = { bg = c.bg_alt }
