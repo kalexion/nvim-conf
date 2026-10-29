@@ -1,7 +1,8 @@
--- Register Arduino sketches as C++ files before configuring LSP servers.
+-- Register language filetypes before configuring LSP servers.
 vim.filetype.add({
     extension = {
         ino = "cpp",
+        goose = "goose",
     },
 })
 
@@ -20,6 +21,7 @@ return {
             local mason_lspconfig = require("mason-lspconfig")
             local mason_null_ls = require("mason-null-ls")
             local lspconfig = require("lspconfig")
+            local lspconfig_configs = require("lspconfig.configs")
             local cmp_nvim_lsp = require("cmp_nvim_lsp")
             local null_ls = require("null-ls")
             local builtins = null_ls.builtins
@@ -70,6 +72,26 @@ return {
                 vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
                 vim.keymap.set("i", "<C-k>", vim.lsp.buf.signature_help, opts)
             end
+
+            -- Register the Goose compiler as a custom LSP server.
+            -- Goose must be installed and available on PATH.
+            if not lspconfig_configs.goose then
+                lspconfig_configs.goose = {
+                    default_config = {
+                        cmd = { "goose", "lsp" },
+                        filetypes = { "goose" },
+                        root_dir = function(fname)
+                            return lspconfig.util.root_pattern(".git")(fname) or vim.fs.dirname(fname)
+                        end,
+                        single_file_support = true,
+                    },
+                }
+            end
+
+            lspconfig.goose.setup({
+                on_attach = on_attach,
+                capabilities = capabilities,
+            })
 
             mason_lspconfig.setup({
                 ensure_installed = servers,
@@ -176,7 +198,8 @@ return {
 
             vim.lsp.enable("tinymist")
 
-            local typstyle = null_ls.builtins.formatting.stylua.with({
+            -- Typst formatter.
+            local typstyle = builtins.formatting.stylua.with({
                 name = "typstyle",
                 command = "/usr/local/bin/typstyle",
                 filetypes = { "typst" },
@@ -188,7 +211,8 @@ return {
                 },
             })
 
-            local odinfmt = null_ls.builtins.formatting.stylua.with({
+            -- Odin formatter.
+            local odinfmt = builtins.formatting.stylua.with({
                 name = "odinfmt",
                 command = "odinfmt",
                 filetypes = { "odin" },
@@ -210,6 +234,7 @@ return {
                     builtins.formatting.stylua,
                     builtins.formatting.shfmt,
                     builtins.diagnostics.golangci_lint,
+
                     builtins.formatting.prettier.with({
                         filetypes = {
                             "javascript",
@@ -230,6 +255,7 @@ return {
                             "xml",
                         },
                     }),
+
                     builtins.formatting.google_java_format,
                     typstyle,
                     odinfmt,
@@ -238,6 +264,7 @@ return {
 
             vim.api.nvim_create_user_command("MasonInstallAll", function()
                 local all = vim.list_extend(vim.deepcopy(servers), formatters_and_linters)
+
                 vim.cmd("MasonInstall " .. table.concat(all, " "))
             end, {})
 
@@ -255,6 +282,7 @@ return {
 
             vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename)
 
+            -- Format the current buffer using its attached formatter.
             vim.keymap.set("n", "<leader>fm", function()
                 vim.lsp.buf.format({
                     bufnr = vim.api.nvim_get_current_buf(),
@@ -263,6 +291,20 @@ return {
             end, {
                 noremap = true,
                 silent = true,
+            })
+
+            -- Format Goose buffers on save using the Goose LSP.
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                pattern = "*.goose",
+                callback = function(args)
+                    vim.lsp.buf.format({
+                        bufnr = args.buf,
+                        async = false,
+                        filter = function(client)
+                            return client.name == "goose"
+                        end,
+                    })
+                end,
             })
 
             vim.keymap.set("n", "<leader>a", function()
