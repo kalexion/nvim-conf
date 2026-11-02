@@ -35,6 +35,7 @@ vim.opt.updatetime = 250
 vim.opt.breakindent = true
 vim.opt.signcolumn = "yes"
 vim.opt.number = true
+vim.opt.relativenumber = true
 vim.opt.scrolloff = 10
 vim.opt.showmode = false
 vim.opt.colorcolumn = "100"
