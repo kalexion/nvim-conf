@@ -74,6 +74,22 @@ local function diag_count(sev_name)
     return #diags
 end
 
+local function file_size()
+    local size = vim.fn.getfsize(vim.fn.expand("%:p"))
+
+    if size < 0 then
+        return "0 B"
+    elseif size < 1000 then
+        return size .. "B"
+    elseif size < 1000 * 1000 then
+        return string.format("%.2fK", size / 1000)
+    elseif size < 1000 * 1000 * 1000 then
+        return string.format("%.2fM", size / (1000 * 1000))
+    else
+        return string.format("%.2fG", size / (1000 * 1000 * 1000))
+    end
+end
+
 -- Git branch caching for performance
 local branch_cache = {}
 local function git_branch()
@@ -100,6 +116,7 @@ vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
 _G._statusline = {
     diag_count = diag_count,
     git_branch = git_branch,
+    file_size = file_size,
 }
 
 _G._statusline.mode = function()
@@ -131,6 +148,7 @@ vim.o.statusline = table.concat({
     "%#StatusLineWarn#W%{v:lua._statusline.diag_count('WARN')} ",
     "%#StatusLineHint#H%{v:lua._statusline.diag_count('HINT')} ",
     "%#StatusLineLines#[%{v:lua._statusline.line_count()}] ",
+    "%#StatusLineFileSize#[%{v:lua._statusline.file_size()}] ",
     "%#StatusLineCur#[%l:%c]%#StatusLine#",
 })
 

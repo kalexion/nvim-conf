@@ -1,39 +1,45 @@
 return {
     {
-        "wnkz/monoglow.nvim",
-        name = "monoglow",
+        "neanias/everforest-nvim",
+        name = "everforest",
         lazy = false,
         priority = 1000,
 
         opts = {
-            transparent = true,
+            background = "hard",
+            transparent_background = true,
+            disable_italic_comments = true,
 
             on_highlights = function(hl, c)
-                hl.StatusLine = { bg = "NONE", fg = c.fg }
-                hl.StatusLineMode = { bg = "#006949", fg = c.glow, bold = true }
-                hl.StatusLinePath = { bg = "#006949", fg = c.fg }
-                hl.StatusLineBranch = { bg = "#006949", fg = c.glow }
-                hl.StatusLineError = { bg = "#006949", fg = c.error }
-                hl.StatusLineWarn = { bg = "#006949", fg = c.warning }
-                hl.StatusLineHint = { bg = "#006949", fg = c.info }
-                hl.StatusLineLines = { bg = "#006949", fg = c.fg_dim }
-                hl.StatusLineCur = { bg = "#006949", fg = c.glow, bold = true }
-                hl.ColorColumn = { bg = c.bg_alt }
-                hl.CursorLine = { bg = c.bg_alt }
-                hl.CursorColumn = { bg = c.bg_alt }
-                hl.Comment = { fg = c.glow, italic = false }
-                hl["@comment"] = { fg = c.glow, italic = false }
-                hl["@comment.documentation"] = { fg = c.glow, italic = false }
-                hl.DiagnosticUnderlineError = { underline = true, undercurl = false, sp = c.error }
-                hl.DiagnosticUnderlineWarn = { underline = true, undercurl = false, sp = c.warning }
-                hl.DiagnosticUnderlineInfo = { underline = true, undercurl = false, sp = c.info }
-                hl.DiagnosticUnderlineHint = { underline = true, undercurl = false, sp = c.hint }
+                local statusline_bg = c.bg_dim
+
+                hl.StatusLine = { bg = statusline_bg, fg = c.fg }
+                hl.StatusLineMode = { bg = statusline_bg, fg = c.green, bold = true }
+                hl.StatusLinePath = { bg = statusline_bg, fg = c.fg }
+                hl.StatusLineBranch = { bg = statusline_bg, fg = c.green }
+                hl.StatusLineError = { bg = statusline_bg, fg = c.red }
+                hl.StatusLineWarn = { bg = statusline_bg, fg = c.yellow }
+                hl.StatusLineHint = { bg = statusline_bg, fg = c.blue }
+                hl.StatusLineLines = { bg = statusline_bg, fg = c.grey0 }
+                hl.StatusLineFileSize = { bg = statusline_bg, fg = c.grey0 }
+                hl.StatusLineCur = { bg = statusline_bg, fg = c.green, bold = true }
+                hl.ColorColumn = { bg = c.bg1 }
+                hl.CursorLine = { bg = c.bg1 }
+                hl.CursorColumn = { bg = c.bg1 }
+                hl.Comment = { fg = c.grey0, italic = false }
+                hl["@comment"] = { fg = c.grey0, italic = false }
+                hl["@comment.documentation"] = { fg = c.grey0, italic = false }
+                hl.DiagnosticUnderlineError = { underline = true, undercurl = false, sp = c.red }
+                hl.DiagnosticUnderlineWarn = { underline = true, undercurl = false, sp = c.yellow }
+                hl.DiagnosticUnderlineInfo = { underline = true, undercurl = false, sp = c.blue }
+                hl.DiagnosticUnderlineHint = { underline = true, undercurl = false, sp = c.aqua }
             end,
         },
 
         config = function(_, opts)
-            require("monoglow").setup(opts)
-            vim.cmd.colorscheme("monoglow")
+            vim.o.background = "dark"
+            require("everforest").setup(opts)
+            vim.cmd.colorscheme("everforest")
         end,
     },
 }
