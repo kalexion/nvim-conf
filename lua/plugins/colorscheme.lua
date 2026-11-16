@@ -23,9 +23,15 @@ return {
                 hl.StatusLineLines = { bg = statusline_bg, fg = c.grey0 }
                 hl.StatusLineFileSize = { bg = statusline_bg, fg = c.grey0 }
                 hl.StatusLineCur = { bg = statusline_bg, fg = c.green, bold = true }
+                hl.Normal = { bg = "none" }
+                hl.NormalNC = { bg = "none" }
+                hl.SignColumn = { bg = "none" }
+                hl.FoldColumn = { bg = "none" }
+                hl.LineNr = { bg = "none" }
+                hl.EndOfBuffer = { bg = "none" }
                 hl.ColorColumn = { bg = c.bg1 }
-                hl.CursorLine = { bg = c.bg1 }
-                hl.CursorColumn = { bg = c.bg1 }
+                hl.CursorLine = { bg = "none" }
+                hl.CursorColumn = { bg = "none" }
                 hl.Comment = { fg = c.grey0, italic = false }
                 hl["@comment"] = { fg = c.grey0, italic = false }
                 hl["@comment.documentation"] = { fg = c.grey0, italic = false }
